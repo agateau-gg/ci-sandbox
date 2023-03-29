@@ -1,0 +1,20 @@
+name: Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read tag name
+        id: tags
+        run: |
+          echo "tag=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+          
+      - name: Show tag name
+        run: echo "tag='$TAG'"
+        env:
+          TAG: ${{ steps.tags.outputs.tag }}
