@@ -1,0 +1,23 @@
+name: workflow_dispatch_example
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      python_version:
+        description: 'Python version to use (see https://github.com/actions/setup-python#supported-version-syntax)'
+        default: '3.10'
+
+jobs:
+  do_python_stuff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python_version || '3.11' }}
+
+      - name: Python versions
+        run: |
+          for bin in $(which -a python) ; do
+            echo "$bin: $($bin --version)"
+          done
+
