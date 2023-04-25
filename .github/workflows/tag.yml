@@ -31,7 +31,6 @@ jobs:
           tar czf packages/ci-sandbox-${{ steps.tags.outputs.tag}}.tar.gz .github
 
       - name: Create release
-        id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
