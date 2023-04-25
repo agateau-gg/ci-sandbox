@@ -13,8 +13,30 @@ jobs:
         id: tags
         run: |
           echo "tag=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
-          
+
       - name: Show tag name
         run: echo "tag='$TAG'"
         env:
           TAG: ${{ steps.tags.outputs.tag }}
+
+      - name: Create assets
+        run: |
+          mkdir packages
+          zip -r packages/ci-sandbox-${{ steps.tags.outputs.tag}}.zip .github
+          tar czf packages/ci-sandbox-${{ steps.tags.outputs.tag}}.tar.gz .github
+
+      - name: Create release
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create --draft ${{ steps.tags.outputs.tag }}
+
+      - name: Upload release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload \
+            ${{ steps.tags.outputs.tag }} \
+            packages/ci-sandbox-*.zip \
+            packages/ci-sandbox-*.tar.gz
