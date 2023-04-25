@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+VERSION="$1"
+TAG=v$VERSION
+
+git tag $TAG -m "Releasing $VERSION"
+git push origin $TAG
