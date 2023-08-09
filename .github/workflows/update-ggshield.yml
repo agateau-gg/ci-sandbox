@@ -1,0 +1,29 @@
+name: update-ggshield
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_git:
+        type: boolean
+        description: "Use the --from-git option"
+        required: true
+      version_or_commit_ref:
+        description: "Version to package, or Git commit ref when called with --from-git"
+        required: true
+
+jobs:
+  regenerate:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Update formula
+        run: |
+          echo from_git=${{ inputs.from_git }}
+          echo version_or_commit_ref=${{ inputs.version_or_commit_ref }}
+
+          args=${{ inputs.version_or_commit_ref }}
+          if [ "${{ inputs.from_git }}" = true ] ; then
+              args="$args --from-git"
+          fi
+          echo scripts/update-ggshield $args
