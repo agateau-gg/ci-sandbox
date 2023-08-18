@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: 'pip'
+    directory: '/ignore-me'
+    ignore:
+      - dependency-name: '*'
