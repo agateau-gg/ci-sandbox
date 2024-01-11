@@ -21,8 +21,8 @@ jobs:
         run: |
           git remote -v
           PR_REF="${GITHUB_REF%/merge}/head"
-          git fetch origin "$PR_REF"
-          if git log --format=%s "origin/$GITHUB_BASE_REF..origin/$PR_REF" | grep '^fixup!' ; then
+          git fetch origin "$PR_REF:pr_ref"
+          if git log --format=%s "origin/$GITHUB_BASE_REF..pr_ref" | grep '^fixup!' ; then
               echo 'Error: this pull request contains fixup commits. Squash them.'
               exit 1
           fi
