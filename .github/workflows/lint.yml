@@ -19,6 +19,7 @@ jobs:
       - name: Check commit messages
         if: github.event_name == 'pull_request'
         run: |
+          git remote -v
           if git log --format=%s "origin/$GITHUB_BASE_REF..origin/$GITHUB_HEAD_REF" | grep '^fixup!' ; then
               echo 'Error: this pull request contains fixup commits. Squash them.'
               exit 1
