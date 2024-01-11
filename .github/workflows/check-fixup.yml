@@ -1,0 +1,29 @@
+name: check-fixup
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  check-fixup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages
+        if: github.event_name == 'pull_request'
+        run: |
+          PR_REF="${GITHUB_REF%/merge}/head"
+          git fetch origin "$PR_REF"
+          if git log --format=%s "origin/$GITHUB_BASE_REF..FETCH_HEAD" | grep '^fixup!' ; then
+              echo 'Error: this pull request contains fixup commits. Squash them.'
+              exit 1
+          fi
+          # In case `git log` fails
+          exit "${PIPESTATUS[0]}"
