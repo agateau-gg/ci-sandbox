@@ -1,0 +1,30 @@
+name: sub_workflow
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: windows-2022
+          - os: macos-latest
+
+    steps:
+      - name: build
+        run: |
+          mkdir dist
+          echo "Hello from ${{ matrix.os }}" > dist/workflow-${{ matrix.os }}
+        shell: bash
+
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-${{ matrix.os }}
+          path: |
+            dist/workflow-*

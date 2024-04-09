@@ -1,0 +1,18 @@
+name: workflow_caller
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call:
+    uses: sub_workflow
+
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: assemble
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          pattern: workflow-*
+          github-otken: ${{ secrets.GITHUB_TOKEN }}
