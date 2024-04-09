@@ -5,7 +5,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  single-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: build
+        run: |
+          mkdir dir1 dir2
+          echo "Hello" > dir1/hello
+          echo "World" > dir2/world
+          echo $SECRET_VAR | sha256sum > dir2/secret
+        shell: bash
+        env:
+          SECRET_VAR: ${{ secrets.SECRET_VAR }}
+
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: single
+          path: |
+            dir1
+            dir2
+
+  matrix-build:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -14,12 +35,12 @@ jobs:
           - os: ubuntu-latest
           - os: windows-2022
           - os: macos-latest
-
     steps:
       - name: build
         run: |
-          mkdir dist
-          echo "Hello from ${{ matrix.os }}" > dist/workflow-${{ matrix.os }}
+          mkdir matrix
+          echo "Hello from ${{ matrix.os }}" > matrix/hello-${{ matrix.os }}
+          echo "World from ${{ matrix.os }}" > matrix/world-${{ matrix.os }}
         shell: bash
 
       - name: upload
@@ -27,4 +48,4 @@ jobs:
         with:
           name: workflow-${{ matrix.os }}
           path: |
-            dist/workflow-*
+            matrix/*-*

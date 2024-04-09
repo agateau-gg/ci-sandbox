@@ -5,14 +5,30 @@ on:
 
 jobs:
   call:
-    uses: sub_workflow
+    uses: ./.github/workflows/sub_workflow.yml
+    secrets: inherit
 
   assemble:
+    needs:
+      - call
     runs-on: ubuntu-latest
     steps:
-      - name: assemble
+      - name: download from single
         uses: actions/download-artifact@v4
         with:
-          run-id: ${{ github.event.workflow_run.id }}
+          name: single
+
+      - name: list
+        run: |
+          tree
+
+      - name: download from matrix
+        uses: actions/download-artifact@v4
+        with:
           pattern: workflow-*
-          github-otken: ${{ secrets.GITHUB_TOKEN }}
+          path: matrix
+          merge-multiple: true
+
+      - name: list
+        run: |
+          tree
